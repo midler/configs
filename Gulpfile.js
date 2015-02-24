@@ -1,9 +1,9 @@
 'use strict';
 
 var gulp = require('gulp');
-var svgmin = require('gulp-svgmin');
-var imgmin = require('gulp-imagemin');
-var hb = require('gulp-hb');
+// var svgmin = require('gulp-svgmin');
+// var imgmin = require('gulp-imagemin');
+// var hb = require('gulp-hb');
 var less = require('gulp-less');
 var pleeease = require('gulp-pleeease');
 var rename = require('gulp-rename');
@@ -36,10 +36,9 @@ var path = {
     src: bpath.src + 'less/',
     dest: bpath.dest + 'css/'
   },
-  hbs: {
-    src: bpath.src + 'hbs',
+  html: {
+    src: bpath.src + 'html/',
     dest: bpath.dest
-
   }
 
 };
@@ -54,29 +53,35 @@ var pathImagesFormat = {
 /*===================Plug-In===================== */
 
 
-gulp.task('svgmin', function () {
-  return gulp.src(pathImagesFormat.svg)
+// gulp.task('svgmin', function () {
+//   return gulp.src(pathImagesFormat.svg)
+//     .pipe(plumber())
+//     .pipe(svgmin())
+//     .pipe(gulp.dest(bpath.dest + 'images/'));
+// });
+
+// gulp.task('imgmin', function () {
+//   return gulp.src(path.images.src)
+//     .pipe(plumber())
+//     .pipe(imgmin)
+//     .pipe(gulp.dest(path.images.srcopt));
+// });
+
+
+
+
+// gulp.task('hbs', function () {
+//   return gulp
+//     .src(path.hbs.src + '/*')
+//     .pipe(plumber())
+//     .pipe(hb())
+//     .pipe(gulp.dest(bpath.dest));
+// });
+
+gulp.task('move-html', function () {
+  return gulp.src(path.html.src + '/**/*.html')
     .pipe(plumber())
-    .pipe(svgmin())
-    .pipe(gulp.dest(bpath.dest + 'images/'));
-});
-
-gulp.task('imgmin', function () {
-  return gulp.src(path.images.src)
-    .pipe(plumber())
-    .pipe(imgmin)
-    .pipe(gulp.dest(path.images.srcopt));
-});
-
-
-
-
-gulp.task('hbs', function () {
-  return gulp
-    .src(path.hbs.src + '/*')
-    .pipe(plumber())
-    .pipe(hb())
-    .pipe(gulp.dest(bpath.dest));
+    .pipe(gulp.dest(path.html.dest));
 });
 
 
@@ -123,9 +128,11 @@ gulp.task('default', function () {
 });
 
 
-gulp.task('server', ['less', 'browser-sync'], function () {
-  gulp.watch("./input/less/**/*.less", ['less']);
+gulp.task('server', ['move-html', 'less', 'browser-sync'], function () {
+  gulp.watch(path.styles.src, ['less']);
 });
 
 
-gulp.task('server -nob', 'server --no-build', ['browser-sync']);
+
+
+// gulp.task('server-nob', ['browser-sync']);
