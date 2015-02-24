@@ -1,92 +1,128 @@
-'use strict';
-
 var gulp = require('gulp');
-var svgmin = require('gulp-svgmin');
-var imgmin = require('gulp-image-min');
-var hb = require('gulp-hb');
 var less = require('gulp-less');
-var pleeease = require('gulp-pleeease');
-var rename = require('gulp-rename');
+var autoprefixer = require('gulp-autoprefixer');
+var csscomb = require('gulp-csscomb');
+var debug = require('gulp-debug');
+var browserSync = require('browser-sync');
 var plumber = require('gulp-plumber');
+var cssmin = require('gulp-cssmin');
+var rename = require('gulp-rename');
+// var postcss    = require('gulp-postcss');
+// var sourcemaps = require('gulp-sourcemaps');
+var pixrem = require('gulp-pixrem');
+var reload = browserSync.reload;
+var cmq = require('gulp-combine-media-queries');
+var uncss = require('gulp-uncss');
+var runSequence = require('run-sequence');
+var styleguide = require("sc5-styleguide");
 
 
-
-
-/*===================Paths===================== */
-//base path
-var bpath = {
-  src: './src/',
-  dest: './dest/'
-};
-
-var path = {
-  images: {
-    src: bpath.src + 'images/',
-    dest: bpath.dest + 'images/',
-    srcopt: bpath.src + 'images/opt/'
-  },
-  scripts: {
-    src: bpath.src + 'js/',
-    dest: bpath.dest + 'js/',
-    destm: bpath.dest + 'js/min/'
-  },
-  styles: {
-    src: bpath.src + 'less/',
-    dest: bpath.dest + 'css/'
-  },
-  hbs: {
-    src: bpath.src + 'hbs',
-    dest: bpath.dest
-
-  }
-
-};
-
-var pathImagesFormat = {
-  jpeg: path.images.src + 'jpeg',
-  png: path.images.src + 'png',
-  svg: path.images.src + 'svg'
-};
-
-
-/*===================Plug-In===================== */
-
-
-gulp.task('svgmin', function () {
-  return gulp.src(pathImagesFormat.svg)
-    .pipe(plumber())
-    .pipe(svgmin())
-    .pipe(gulp.dest(bpath.dest + 'images/'));
-});
-
-gulp.task('imgmin', function () {
-  return gulp.src(path.images.src)
-    .pipe(plumber())
-    .pipe(imgmin)
-    .pipe(gulp.dest(path.images.srcopt));
+gulp.task('uncss', function() {
+    return gulp.src('./css/style*.css')
+        .pipe(uncss({
+            html: ['./index.html']
+        }))
+        .pipe(rename({
+            suffix: '.uncss'
+        }))
+        .pipe(gulp.dest('css'));
 });
 
 
 
+gulp.task('less', function() {
+    gulp.src('./less/style.less')
+        // .pipe(debug({
+        //     verbose: true
+        // }))
+        .pipe(plumber())
+        .pipe(less())
+        .pipe(autoprefixer({
+            browsers: ['last 4 versions', '> 1%', 'Firefox < 4', 'ie 8'],
+            cascade: false
+        }))
+        .pipe(pixrem())
+        .pipe(gulp.dest('css'))
+        .pipe(reload({
+            stream: true
+        }));
 
-gulp.task('hbs', function () {
-  return gulp
-    .src(path.hbs.src + '/*')
-    .pipe(plumber())
-    .pipe(hb())
-    .pipe(gulp.dest(bpath.dest));
 });
 
 
-gulp.task('less', function () {
-  return gulp
-    .src(path.styles.src + '**/*.less')
-    .pipe(plumber())
-    .pipe(less())
-    .pipe(pleeease())
-    .pipe(rename({
-      suffix: '.min',
-      extname: '.css'
-    }))
-    .pipe(gulp.dest(bpath.dest + '/css'));
+gulp.task('cmq', function() {
+    gulp.src('./css/*.css')
+        .pipe(plumber())
+        .pipe(cmq({
+            log: true
+        }))
+        .pipe(rename({
+            suffix: '.cmq'
+        }))
+        .pipe(gulp.dest('css'));
 });
+
+
+gulp.task('watch', function() {
+    livereload.listen();
+    gulp.watch('build/**', ['less']);
+});
+
+gulp.task('csscomb', function() {
+    return gulp.src('./css/*.css')
+        .pipe(csscomb())
+        .pipe(gulp.dest('css'));
+});
+
+gulp.task('cssmin', function() {
+    gulp.src([
+            './css/*.css',
+            '!./css/*.min.css'
+        ])
+        .pipe(cssmin({
+            keepBreaks: true
+        }))
+        .pipe(rename({
+            suffix: '.min'
+        }))
+        .pipe(gulp.dest('css'));
+});
+
+gulp.task('browser-sync', function() {
+    browserSync.init(null, {
+        server: {
+
+           
+            baseDir: "./",
+            index: "main.html"
+        },
+         ui: {
+                port: 9090
+            },
+        logLevel: "info",
+        open: false,
+        // ghostMode: {
+        //     clicks: true,
+        //     location: true,
+        //     forms: true,
+        //     scroll: false
+        // }
+        ghostMode: false,
+        notify: false,
+        reloadDelay: 500
+    });
+});
+
+
+
+
+
+gulp.task('build', function(callback) {
+    runSequence('less', ['csscomb'], ['cssmin'], callback);
+});
+
+gulp.task('default', ['less', 'browser-sync'], function() {
+    gulp.watch("less/**/*.less", ['less']);
+});
+
+gulp.task('just-server', ['browser-sync']);
