@@ -13,7 +13,7 @@ var runSequence = require('run-sequence');
 var stylus = require('gulp-stylus');
 var flatten = require('gulp-flatten');
 var svgconvert = require('gulp-svg2png');
-
+var uglify = require('gulp-uglify');
 
 
 /*===================Paths===================== */
@@ -32,7 +32,6 @@ var path = {
   scripts: {
     src: bpath.src + 'js/',
     dest: bpath.dest + 'js/',
-    destm: bpath.dest + 'js/min/'
   },
   styles: {
     src: bpath.src + 'stylus/',
@@ -113,6 +112,19 @@ gulp.task('move-fonts', function () {
     .pipe(gulp.dest(path.fonts.dest));
 });
 
+gulp.task('move-js', function () {
+  return gulp.src(path.scripts.src + '/**/*.*')
+    .pipe(plumber())
+    .pipe(uglify({
+      compress: true
+    }))
+    .pipe(rename({
+      suffix: '.min',
+      extname: '.js'
+    }))
+    .pipe(gulp.dest(path.scripts.dest));
+});
+
 
 gulp.task('less', function () {
   return gulp
@@ -130,7 +142,7 @@ gulp.task('less', function () {
 
 gulp.task('stylus', function () {
   return gulp
-    .src(path.styles.src + '/style.styl')
+    .src(path.styles.src + '/*.styl')
     .pipe(plumber())
     .pipe(stylus({
       "include css": true
@@ -170,7 +182,7 @@ gulp.task('default', function () {
 });
 
 
-gulp.task('server', ['imgmin', 'move-fonts', 'move-html', 'stylus', 'browser-sync'], function () {
+gulp.task('server', ['imgmin', 'move-js', 'move-fonts', 'move-html', 'stylus', 'browser-sync'], function () {
   gulp.watch(path.styles.src + '/**/*.styl', ['stylus']);
   gulp.watch(path.html.src + "/*.html", ['move-html']);
 });
