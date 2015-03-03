@@ -74,6 +74,9 @@ gulp.task('imgmin', ['svgconvert'],
         interlaced: true,
         optimizationLevel: 3
       }))
+      .pipe(rename({
+        prefix: '2014_Report_'
+      }))
       .pipe(flatten())
       .pipe(gulp.dest(path.images.dest));
   });
@@ -86,8 +89,6 @@ gulp.task('svgconvert', function () {
     .pipe(svgconvert())
     .pipe(gulp.dest(pathImagesFormat.png));
 });
-
-
 
 // gulp.task('hbs', function () {
 //   return gulp
@@ -125,7 +126,6 @@ gulp.task('move-js', function () {
     .pipe(gulp.dest(path.scripts.dest));
 });
 
-
 gulp.task('less', function () {
   return gulp
     .src(path.styles.src + '**/*.less')
@@ -147,12 +147,42 @@ gulp.task('stylus', function () {
     .pipe(stylus({
       "include css": true
     }))
-    .pipe(gulp.dest(bpath.dest + '/css'))
+    .pipe(pleeease({
+      "autoprefixer": {
+        "browsers": ["last 4 versions", "ie 8"]
+      },
+      "filters": true,
+      "rem": true,
+      "pseudoElements": true,
+      "opacity": true,
+      "import": true,
+      "minifier": true,
+      "mqpacker": true
+    }))
+    .pipe(gulp.dest(bpath.dest + '/css/min'))
     .pipe(reload({
       stream: true
     }));
 });
 
+gulp.task('please', function () {
+  return gulp
+    .src(path.styles.dest + '/*.css')
+    .pipe(plumber())
+    .pipe(pleeease({
+      "autoprefixer": {
+        "browsers": ["last 4 versions", "ie 8"]
+      },
+      "filters": true,
+      "rem": true,
+      "pseudoElements": true,
+      "opacity": true,
+      "import": true,
+      "minifier": true,
+      "mqpacker": true
+    }))
+    .pipe(gulp.dest(bpath.dest + '/css/min/'));
+});
 
 gulp.task('browser-sync', function () {
   browserSync({
@@ -186,7 +216,6 @@ gulp.task('server', ['imgmin', 'move-js', 'move-fonts', 'move-html', 'stylus', '
   gulp.watch(path.styles.src + '/**/*.styl', ['stylus']);
   gulp.watch(path.html.src + "/*.html", ['move-html']);
 });
-
 
 
 
