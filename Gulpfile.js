@@ -20,7 +20,7 @@ var uglify = require('gulp-uglify');
 //base path
 var bpath = {
   src: './src/',
-  dest: './dest/'
+  dest: './dest/'   
 };
 
 var path = {
