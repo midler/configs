@@ -7,23 +7,27 @@ var reload = browserSync.reload;
 var imagemin = require('gulp-imagemin');
 var prefix = require('gulp-autoprefixer');
 var stylus = require('gulp-stylus');
-
+// stylus modules
 var kouto = require('kouto-swiss');
-
+// var rupture = require('rupture');
+// var jeet = require('jeet');
+// 
 var rimraf = require('rimraf');
 var csscomb = require('gulp-csscomb');
 var rename = require('gulp-rename');
 var runSequence = require('run-sequence');
 var cmq = require('gulp-combine-media-queries');
+// var nmq = require('gulp-no-media-queries');
 var postcss = require('gulp-postcss');
 var unwrapAtMedia = require('postcss-unwrap-at-media');
 var iemedia = require('iemedia-postcss');
+
 var minifyCss = require('gulp-minify-css');
-var critical = require('critical').stream;
+// var critical = require('critical').stream;
 var jsmin = require('gulp-jsmin');
 var jade = require('gulp-jade');
 var svgfallback = require('gulp-svgfallback');
-var notify = require("gulp-notify");
+
 
 
 var config = {
@@ -33,11 +37,6 @@ var config = {
 
 gulp.task('clean', function (cb) {
   return rimraf(config.dist, cb);
-});
-
-gulp.task('mv', function () {
-  return gulp.src('node_modules/normalize.css/normalize.css')
-  .pipe(gulp.dest(config.dist + 'css'))
 });
 
 
@@ -54,21 +53,22 @@ gulp.task('styles', function () {
     .pipe(reload({
       stream: true
     }));
+
 });
 
 gulp.task('styles:build', function () {
   var avoid = [
-    'max-width',
-    'orientation',
-    'handheld',
-    'print',
-    'aspect-ratio',
-    'max-height',
-    'resolution',
-    'max-device-width',
-    'max-device-height',
-    'max-resolution'
-  ];
+        'max-width',
+        'orientation',
+        'handheld',
+        'print',
+        'aspect-ratio',
+        'max-height',
+        'resolution',
+        'max-device-width',
+        'max-device-height',
+        'max-resolution'
+      ];
   return gulp.src(config.src + 'styles/style.styl')
     .pipe(plumber())
     .pipe(stylus({
@@ -122,22 +122,9 @@ gulp.task('svg', function () {
 
 
 gulp.task('html', function () {
-
-   var onError = function(err) {
-        notify.onError({
-                    title:    "Gulp",
-                    subtitle: "Failure!",
-                    message:  "Error: <%= error.message %>",
-                    sound:    "Beep"
-                })(err);
-        this.emit('end');
-    };
-
-
   return gulp.src(config.src + 'markup/' + '*.jade')
-    .pipe(plumber({errorHandler: onError}))
-    
-  .pipe(jade({
+    .pipe(plumber())
+    .pipe(jade({
       pretty: true,
       cache: false
     }))
@@ -203,11 +190,11 @@ gulp.task('server', function () {
 
 
 gulp.task('build', function (callback) {
-  runSequence(['clean'], ['images'], ['mv','styles:build', 'html', 'js', 'fonts', 'files'], callback);
+  runSequence(['clean'], ['images'], ['styles:build', 'html', 'js', 'fonts', 'files'], callback);
 });
 
 gulp.task('default', function (callback) {
-  runSequence(['images'], ['mv','styles', 'html', 'js', 'fonts', 'files', 'server'], callback);
+  runSequence(['images'], ['styles', 'html', 'js', 'fonts', 'files', 'server'], callback);
   gulp.watch(config.src + 'styles/**/*.styl', ['styles']);
   gulp.watch(config.src + 'styles/**/*.css', ['styles']);
   gulp.watch(config.src + 'markup/' + '*.jade', ['html']);
