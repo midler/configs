@@ -9,21 +9,16 @@ var prefix = require('gulp-autoprefixer');
 var stylus = require('gulp-stylus');
 // stylus modules
 var kouto = require('kouto-swiss');
-// var rupture = require('rupture');
-// var jeet = require('jeet');
-// 
 var rimraf = require('rimraf');
 var csscomb = require('gulp-csscomb');
 var rename = require('gulp-rename');
 var runSequence = require('run-sequence');
 var cmq = require('gulp-combine-media-queries');
-// var nmq = require('gulp-no-media-queries');
 var postcss = require('gulp-postcss');
 var unwrapAtMedia = require('postcss-unwrap-at-media');
 var iemedia = require('iemedia-postcss');
 
 var minifyCss = require('gulp-minify-css');
-// var critical = require('critical').stream;
 var jsmin = require('gulp-jsmin');
 var jade = require('gulp-jade');
 var svgfallback = require('gulp-svgfallback');
