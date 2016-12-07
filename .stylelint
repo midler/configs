@@ -1,0 +1,62 @@
+{
+  "rules": {
+    "color-hex-case" : "upper",
+    "color-hex-length" : "long",
+    "color-named" : "never",
+    "color-no-invalid-hex" : true,
+
+    "font-family-name-quotes" : "always-where-recommended",
+    "font-family-no-duplicate-names" : true,
+    "font-weight-notation" : "named-where-possible"
+
+    "function-calc-no-unspaced-operator" : true,
+    "function-comma-newline-after" : "never-multi-line" ,
+    "function-comma-newline-before" : "never-multi-line" ,
+    "function-comma-space-after" : "always",
+    "function-comma-space-before" : "never",
+    "function-linear-gradient-no-nonstandard-direction" : true,
+    "function-max-empty-lines" : 0,
+    "function-name-case" : "lower",
+    "function-parentheses-newline-inside" : "never-multi-line",
+    "function-parentheses-space-inside" : "never-single-line",
+    "function-url-quotes" : {
+      "always", 
+      except: ["empty"] 
+    },
+    "function-whitespace-after" :  "always",
+
+    "number-leading-zero" : "always",
+    "number-max-precision" : 3,
+    "number-no-trailing-zeros" : true,
+
+    "string-no-newline" : true,
+    "string-quotes" : "double",
+
+    "length-zero-no-unit" : true,
+
+    "time-no-imperceptible" : true,
+
+    "unit-case" : "lower",
+
+    "unit-no-unknown" : true,
+
+    "value-keyword-case" : "lower",
+    "value-no-vendor-prefix" : true,
+
+    "value-list-comma-newline-after" : "never",
+    "value-list-comma-newline-before" : "never",
+    "value-list-comma-space-after" : "always",
+    "value-list-comma-space-before" : "never",
+    "value-list-max-empty-lines" : 0,
+
+    "shorthand-property-no-redundant-values" : true,
+
+    "property-case" : "lower",
+
+    "property-no-unknown" : true,
+    "property-no-vendor-prefix" : true,
+
+    "keyframe-declaration-no-important" : true
+ 
+  } 
+}
